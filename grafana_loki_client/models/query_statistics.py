@@ -1,15 +1,18 @@
-from typing import Any, Dict, List, Type, TypeVar
+from typing import TYPE_CHECKING, Any, Dict, List, Type, TypeVar
 
-import attr
+from attrs import define as _attrs_define
+from attrs import field as _attrs_field
 
-from ..models.query_statistics_ingester import QueryStatisticsIngester
-from ..models.query_statistics_querier import QueryStatisticsQuerier
-from ..models.query_statistics_summary import QueryStatisticsSummary
+if TYPE_CHECKING:
+    from ..models.query_statistics_ingester import QueryStatisticsIngester
+    from ..models.query_statistics_querier import QueryStatisticsQuerier
+    from ..models.query_statistics_summary import QueryStatisticsSummary
+
 
 T = TypeVar("T", bound="QueryStatistics")
 
 
-@attr.s(auto_attribs=True)
+@_attrs_define
 class QueryStatistics:
     """
     Attributes:
@@ -18,10 +21,10 @@ class QueryStatistics:
         ingester (QueryStatisticsIngester):
     """
 
-    summary: QueryStatisticsSummary
-    querier: QueryStatisticsQuerier
-    ingester: QueryStatisticsIngester
-    additional_properties: Dict[str, Any] = attr.ib(init=False, factory=dict)
+    summary: "QueryStatisticsSummary"
+    querier: "QueryStatisticsQuerier"
+    ingester: "QueryStatisticsIngester"
+    additional_properties: Dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> Dict[str, Any]:
         summary = self.summary.to_dict()
@@ -44,6 +47,10 @@ class QueryStatistics:
 
     @classmethod
     def from_dict(cls: Type[T], src_dict: Dict[str, Any]) -> T:
+        from ..models.query_statistics_ingester import QueryStatisticsIngester
+        from ..models.query_statistics_querier import QueryStatisticsQuerier
+        from ..models.query_statistics_summary import QueryStatisticsSummary
+
         d = src_dict.copy()
         summary = QueryStatisticsSummary.from_dict(d.pop("summary"))
 

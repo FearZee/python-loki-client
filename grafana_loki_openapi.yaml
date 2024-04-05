@@ -37,7 +37,7 @@ paths:
           schema:
             type: string
       responses:
-        200:
+        '200':
           description: OK response.
           content:
             application/json:
@@ -84,19 +84,113 @@ paths:
           schema:
             type: string
       responses:
-        200:
+        '200':
           description: OK response.
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/QueryResponseBody"
+
+  /loki/api/v1/labels:
+    get:
+      tags:
+        - Labels
+      parameters:
+        - name: start
+          in: query
+          description: The start time for the query as a nanosecond Unix epoch. Defaults to 6 hours ago.
+          required: false
+          schema:
+            type: integer
+        - name: end
+          in: query
+          description: The end time for the query as a nanosecond Unix epoch. Defaults to now.
+          required: false
+          schema:
+            type: integer
+        - name: since
+          in: query
+          description: A duration used to calculate start relative to end. If end is in the future, start is calculated as this duration before now. Any value specified for start supersedes this parameter.
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK response.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LabelsResponseBody"
+
+  /ready:
+    get:
+      tags:
+        - Ready
+      responses:
+        '200':
+          description: OK response.
+
+  /loki/api/v1/format_query:
+    get:
+      tags:
+        - Format Query
+      parameters:
+        - name: query
+          in: query
+          description: A LogQL query string.
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK response.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FormatQueryResponseBody"
+
+    post:
+      tags:
+        - Format Query
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                query:
+                  type: string
+      responses:
+        '200':
+          description: OK response.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FormatQueryResponseBody"
+
+  /services:
+    get:
+      tags:
+        - Services
+      summary: Get a list of all running services and their current states.
+      description: |
+        Returns a list of all running services and their current states.
+      responses:
+        '200':
+          description: OK response.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ServicesListResponseBody"
+
+
 components:
   schemas:
     Direction:
-      enum:
-        - "forward"
-        - "backward"
-      default: "backward"
+      type: string
+      enum: [ forward, backward ]
+      default: backward
     TimestampFormat:
       oneOf:
         - type: string
@@ -270,3 +364,39 @@ components:
             - warn
             - info
             - debug
+    LabelsResponseBody:
+      type: object
+      properties:
+        status:
+          type: string
+          description: The status of the response (e.g., "success").
+        data:
+          type: array
+          items:
+            type: string
+          description: |
+            An array containing the list of known labels.
+    FormatQueryResponseBody:
+      type: object
+      properties:
+        status:
+          type: string
+          description: The status of the response (e.g., "success").
+        data:
+          type: string
+          description: The formatted LogQL query string.
+
+    ServiceStateEnum:
+      type: string
+      enum: [ New, Starting, Running, Stopping, Terminated, Failed ]
+    ServicesListResponseBody:
+      type: array
+      items:
+        type: object
+        properties:
+          service_name:
+            type: string
+            description: The name of the service.
+          state:
+            $ref: "#/components/schemas/ServiceStateEnum"
+            description: The current state of the service.

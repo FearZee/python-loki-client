@@ -1,14 +1,18 @@
-from typing import Any, Dict, List, Type, TypeVar, Union
+from typing import TYPE_CHECKING, Any, Dict, List, Type, TypeVar, Union
 
-import attr
+from attrs import define as _attrs_define
+from attrs import field as _attrs_field
 
-from ..models.query_statistics_store import QueryStatisticsStore
 from ..types import UNSET, Unset
+
+if TYPE_CHECKING:
+    from ..models.query_statistics_store import QueryStatisticsStore
+
 
 T = TypeVar("T", bound="QueryStatisticsIngester")
 
 
-@attr.s(auto_attribs=True)
+@_attrs_define
 class QueryStatisticsIngester:
     """
     Attributes:
@@ -23,14 +27,18 @@ class QueryStatisticsIngester:
     total_chunks_matched: int
     total_batches: int
     total_lines_sent: int
-    store: Union[Unset, QueryStatisticsStore] = UNSET
-    additional_properties: Dict[str, Any] = attr.ib(init=False, factory=dict)
+    store: Union[Unset, "QueryStatisticsStore"] = UNSET
+    additional_properties: Dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> Dict[str, Any]:
         total_reached = self.total_reached
+
         total_chunks_matched = self.total_chunks_matched
+
         total_batches = self.total_batches
+
         total_lines_sent = self.total_lines_sent
+
         store: Union[Unset, Dict[str, Any]] = UNSET
         if not isinstance(self.store, Unset):
             store = self.store.to_dict()
@@ -52,6 +60,8 @@ class QueryStatisticsIngester:
 
     @classmethod
     def from_dict(cls: Type[T], src_dict: Dict[str, Any]) -> T:
+        from ..models.query_statistics_store import QueryStatisticsStore
+
         d = src_dict.copy()
         total_reached = d.pop("totalReached")
 

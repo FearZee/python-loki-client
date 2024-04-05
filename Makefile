@@ -1,12 +1,9 @@
 .SILENT: fmt check lint
 
 generate:
-	rm -rf grafana_loki_client
+	rmdir /s grafana_loki_client
 
 	openapi-python-client generate --meta none --path grafana_loki_openapi.yaml
-
-	touch grafana_loki_client/py.typed
-	make fmt
 
 fmt:
 	find . -type d -name ".venv" -prune -o -print -type f -name "*.py" \

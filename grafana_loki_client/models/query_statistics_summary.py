@@ -1,13 +1,14 @@
 from typing import Any, Dict, List, Type, TypeVar, Union
 
-import attr
+from attrs import define as _attrs_define
+from attrs import field as _attrs_field
 
 from ..types import UNSET, Unset
 
 T = TypeVar("T", bound="QueryStatisticsSummary")
 
 
-@attr.s(auto_attribs=True)
+@_attrs_define
 class QueryStatisticsSummary:
     """
     Attributes:
@@ -29,16 +30,23 @@ class QueryStatisticsSummary:
     queue_time: Union[Unset, int] = UNSET
     subqueries: Union[Unset, int] = UNSET
     total_entries_returned: Union[Unset, int] = UNSET
-    additional_properties: Dict[str, Any] = attr.ib(init=False, factory=dict)
+    additional_properties: Dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> Dict[str, Any]:
         bytes_processed_per_second = self.bytes_processed_per_second
+
         lines_processed_per_second = self.lines_processed_per_second
+
         total_bytes_processed = self.total_bytes_processed
+
         total_lines_processed = self.total_lines_processed
+
         exec_time = self.exec_time
+
         queue_time = self.queue_time
+
         subqueries = self.subqueries
+
         total_entries_returned = self.total_entries_returned
 
         field_dict: Dict[str, Any] = {}

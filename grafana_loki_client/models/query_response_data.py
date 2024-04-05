@@ -1,27 +1,31 @@
-from typing import Any, Dict, List, Type, TypeVar
+from typing import TYPE_CHECKING, Any, Dict, List, Type, TypeVar
 
-import attr
+from attrs import define as _attrs_define
+from attrs import field as _attrs_field
 
 from ..models.query_response_data_result_type import QueryResponseDataResultType
-from ..models.query_response_result import QueryResponseResult
-from ..models.query_statistics import QueryStatistics
+
+if TYPE_CHECKING:
+    from ..models.query_response_result import QueryResponseResult
+    from ..models.query_statistics import QueryStatistics
+
 
 T = TypeVar("T", bound="QueryResponseData")
 
 
-@attr.s(auto_attribs=True)
+@_attrs_define
 class QueryResponseData:
     """
     Attributes:
         result_type (QueryResponseDataResultType):
-        result (List[QueryResponseResult]):
+        result (List['QueryResponseResult']):
         stats (QueryStatistics):
     """
 
     result_type: QueryResponseDataResultType
-    result: List[QueryResponseResult]
-    stats: QueryStatistics
-    additional_properties: Dict[str, Any] = attr.ib(init=False, factory=dict)
+    result: List["QueryResponseResult"]
+    stats: "QueryStatistics"
+    additional_properties: Dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> Dict[str, Any]:
         result_type = self.result_type.value
@@ -29,7 +33,6 @@ class QueryResponseData:
         result = []
         for result_item_data in self.result:
             result_item = result_item_data.to_dict()
-
             result.append(result_item)
 
         stats = self.stats.to_dict()
@@ -48,6 +51,9 @@ class QueryResponseData:
 
     @classmethod
     def from_dict(cls: Type[T], src_dict: Dict[str, Any]) -> T:
+        from ..models.query_response_result import QueryResponseResult
+        from ..models.query_statistics import QueryStatistics
+
         d = src_dict.copy()
         result_type = QueryResponseDataResultType(d.pop("resultType"))
 

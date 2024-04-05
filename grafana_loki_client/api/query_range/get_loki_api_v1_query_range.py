@@ -1,9 +1,11 @@
 import datetime
+from http import HTTPStatus
 from typing import Any, Dict, Optional, Union
 
 import httpx
 
-from ...client import Client
+from ... import errors
+from ...client import AuthenticatedClient, Client
 from ...models.direction import Direction
 from ...models.query_response_body import QueryResponseBody
 from ...types import UNSET, Response, Unset
@@ -11,137 +13,128 @@ from ...types import UNSET, Response, Unset
 
 def _get_kwargs(
     *,
-    client: Client,
     query: str,
-    limit: Union[Unset, None, int] = 100,
-    start: Union[None, Unset, datetime.datetime, float, int] = UNSET,
-    end: Union[None, Unset, datetime.datetime, float, int] = UNSET,
-    step: Union[None, Unset, datetime.datetime, float, int] = UNSET,
-    interval: Union[Unset, None, float] = UNSET,
-    direction: Union[Unset, None, Direction] = Direction.BACKWARD,
+    limit: Union[Unset, int] = 100,
+    start: Union[Unset, datetime.datetime, float, int] = UNSET,
+    end: Union[Unset, datetime.datetime, float, int] = UNSET,
+    step: Union[Unset, datetime.datetime, float, int] = UNSET,
+    interval: Union[Unset, float] = UNSET,
+    direction: Union[Unset, Direction] = UNSET,
     x_scope_org_id: Union[Unset, str] = UNSET,
 ) -> Dict[str, Any]:
-    url = f"{client.base_url}/loki/api/v1/query_range"
-
-    headers: Dict[str, str] = client.get_headers()
-    cookies: Dict[str, Any] = client.get_cookies()
-
+    headers: Dict[str, Any] = {}
     if not isinstance(x_scope_org_id, Unset):
         headers["X-Scope-OrgID"] = x_scope_org_id
 
     params: Dict[str, Any] = {}
+
     params["query"] = query
 
     params["limit"] = limit
 
-    json_start: Union[None, Unset, float, int, str]
+    json_start: Union[Unset, float, int, str]
     if isinstance(start, Unset):
         json_start = UNSET
-    elif start is None:
-        json_start = None
-
     elif isinstance(start, datetime.datetime):
         json_start = start.isoformat()
-
     else:
         json_start = start
-
     params["start"] = json_start
 
-    json_end: Union[None, Unset, float, int, str]
+    json_end: Union[Unset, float, int, str]
     if isinstance(end, Unset):
         json_end = UNSET
-    elif end is None:
-        json_end = None
-
     elif isinstance(end, datetime.datetime):
         json_end = end.isoformat()
-
     else:
         json_end = end
-
     params["end"] = json_end
 
-    json_step: Union[None, Unset, float, int, str]
+    json_step: Union[Unset, float, int, str]
     if isinstance(step, Unset):
         json_step = UNSET
-    elif step is None:
-        json_step = None
-
     elif isinstance(step, datetime.datetime):
         json_step = step.isoformat()
-
     else:
         json_step = step
-
     params["step"] = json_step
 
     params["interval"] = interval
 
-    json_direction: Union[Unset, None, str] = UNSET
+    json_direction: Union[Unset, str] = UNSET
     if not isinstance(direction, Unset):
-        json_direction = direction.value if direction else None
+        json_direction = direction.value
 
     params["direction"] = json_direction
 
     params = {k: v for k, v in params.items() if v is not UNSET and v is not None}
 
-    return {
+    _kwargs: Dict[str, Any] = {
         "method": "get",
-        "url": url,
-        "headers": headers,
-        "cookies": cookies,
-        "timeout": client.get_timeout(),
+        "url": "/loki/api/v1/query_range",
         "params": params,
     }
 
+    _kwargs["headers"] = headers
+    return _kwargs
 
-def _parse_response(*, response: httpx.Response) -> Optional[QueryResponseBody]:
-    if response.status_code == 200:
+
+def _parse_response(
+    *, client: Union[AuthenticatedClient, Client], response: httpx.Response
+) -> Optional[QueryResponseBody]:
+    if response.status_code == HTTPStatus.OK:
         response_200 = QueryResponseBody.from_dict(response.json())
 
         return response_200
-    return None
+    if client.raise_on_unexpected_status:
+        raise errors.UnexpectedStatus(response.status_code, response.content)
+    else:
+        return None
 
 
-def _build_response(*, response: httpx.Response) -> Response[QueryResponseBody]:
+def _build_response(
+    *, client: Union[AuthenticatedClient, Client], response: httpx.Response
+) -> Response[QueryResponseBody]:
     return Response(
-        status_code=response.status_code,
+        status_code=HTTPStatus(response.status_code),
         content=response.content,
         headers=response.headers,
-        parsed=_parse_response(response=response),
+        parsed=_parse_response(client=client, response=response),
     )
 
 
 def sync_detailed(
     *,
-    client: Client,
+    client: Union[AuthenticatedClient, Client],
     query: str,
-    limit: Union[Unset, None, int] = 100,
-    start: Union[None, Unset, datetime.datetime, float, int] = UNSET,
-    end: Union[None, Unset, datetime.datetime, float, int] = UNSET,
-    step: Union[None, Unset, datetime.datetime, float, int] = UNSET,
-    interval: Union[Unset, None, float] = UNSET,
-    direction: Union[Unset, None, Direction] = Direction.BACKWARD,
+    limit: Union[Unset, int] = 100,
+    start: Union[Unset, datetime.datetime, float, int] = UNSET,
+    end: Union[Unset, datetime.datetime, float, int] = UNSET,
+    step: Union[Unset, datetime.datetime, float, int] = UNSET,
+    interval: Union[Unset, float] = UNSET,
+    direction: Union[Unset, Direction] = UNSET,
     x_scope_org_id: Union[Unset, str] = UNSET,
 ) -> Response[QueryResponseBody]:
     """
     Args:
         query (str):
-        limit (Union[Unset, None, int]):  Default: 100.
-        start (Union[None, Unset, datetime.datetime, float, int]):
-        end (Union[None, Unset, datetime.datetime, float, int]):
-        step (Union[None, Unset, datetime.datetime, float, int]):
-        interval (Union[Unset, None, float]):
-        direction (Union[Unset, None, Direction]):  Default: Direction.BACKWARD.
+        limit (Union[Unset, int]):  Default: 100.
+        start (Union[Unset, datetime.datetime, float, int]):
+        end (Union[Unset, datetime.datetime, float, int]):
+        step (Union[Unset, datetime.datetime, float, int]):
+        interval (Union[Unset, float]):
+        direction (Union[Unset, Direction]):
         x_scope_org_id (Union[Unset, str]):
+
+    Raises:
+        errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+        httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
         Response[QueryResponseBody]
     """
 
     kwargs = _get_kwargs(
-        client=client,
         query=query,
         limit=limit,
         start=start,
@@ -152,39 +145,42 @@ def sync_detailed(
         x_scope_org_id=x_scope_org_id,
     )
 
-    response = httpx.request(
-        verify=client.verify_ssl,
+    response = client.get_httpx_client().request(
         **kwargs,
     )
 
-    return _build_response(response=response)
+    return _build_response(client=client, response=response)
 
 
 def sync(
     *,
-    client: Client,
+    client: Union[AuthenticatedClient, Client],
     query: str,
-    limit: Union[Unset, None, int] = 100,
-    start: Union[None, Unset, datetime.datetime, float, int] = UNSET,
-    end: Union[None, Unset, datetime.datetime, float, int] = UNSET,
-    step: Union[None, Unset, datetime.datetime, float, int] = UNSET,
-    interval: Union[Unset, None, float] = UNSET,
-    direction: Union[Unset, None, Direction] = Direction.BACKWARD,
+    limit: Union[Unset, int] = 100,
+    start: Union[Unset, datetime.datetime, float, int] = UNSET,
+    end: Union[Unset, datetime.datetime, float, int] = UNSET,
+    step: Union[Unset, datetime.datetime, float, int] = UNSET,
+    interval: Union[Unset, float] = UNSET,
+    direction: Union[Unset, Direction] = UNSET,
     x_scope_org_id: Union[Unset, str] = UNSET,
 ) -> Optional[QueryResponseBody]:
     """
     Args:
         query (str):
-        limit (Union[Unset, None, int]):  Default: 100.
-        start (Union[None, Unset, datetime.datetime, float, int]):
-        end (Union[None, Unset, datetime.datetime, float, int]):
-        step (Union[None, Unset, datetime.datetime, float, int]):
-        interval (Union[Unset, None, float]):
-        direction (Union[Unset, None, Direction]):  Default: Direction.BACKWARD.
+        limit (Union[Unset, int]):  Default: 100.
+        start (Union[Unset, datetime.datetime, float, int]):
+        end (Union[Unset, datetime.datetime, float, int]):
+        step (Union[Unset, datetime.datetime, float, int]):
+        interval (Union[Unset, float]):
+        direction (Union[Unset, Direction]):
         x_scope_org_id (Union[Unset, str]):
 
+    Raises:
+        errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+        httpx.TimeoutException: If the request takes longer than Client.timeout.
+
     Returns:
-        Response[QueryResponseBody]
+        QueryResponseBody
     """
 
     return sync_detailed(
@@ -202,33 +198,36 @@ def sync(
 
 async def asyncio_detailed(
     *,
-    client: Client,
+    client: Union[AuthenticatedClient, Client],
     query: str,
-    limit: Union[Unset, None, int] = 100,
-    start: Union[None, Unset, datetime.datetime, float, int] = UNSET,
-    end: Union[None, Unset, datetime.datetime, float, int] = UNSET,
-    step: Union[None, Unset, datetime.datetime, float, int] = UNSET,
-    interval: Union[Unset, None, float] = UNSET,
-    direction: Union[Unset, None, Direction] = Direction.BACKWARD,
+    limit: Union[Unset, int] = 100,
+    start: Union[Unset, datetime.datetime, float, int] = UNSET,
+    end: Union[Unset, datetime.datetime, float, int] = UNSET,
+    step: Union[Unset, datetime.datetime, float, int] = UNSET,
+    interval: Union[Unset, float] = UNSET,
+    direction: Union[Unset, Direction] = UNSET,
     x_scope_org_id: Union[Unset, str] = UNSET,
 ) -> Response[QueryResponseBody]:
     """
     Args:
         query (str):
-        limit (Union[Unset, None, int]):  Default: 100.
-        start (Union[None, Unset, datetime.datetime, float, int]):
-        end (Union[None, Unset, datetime.datetime, float, int]):
-        step (Union[None, Unset, datetime.datetime, float, int]):
-        interval (Union[Unset, None, float]):
-        direction (Union[Unset, None, Direction]):  Default: Direction.BACKWARD.
+        limit (Union[Unset, int]):  Default: 100.
+        start (Union[Unset, datetime.datetime, float, int]):
+        end (Union[Unset, datetime.datetime, float, int]):
+        step (Union[Unset, datetime.datetime, float, int]):
+        interval (Union[Unset, float]):
+        direction (Union[Unset, Direction]):
         x_scope_org_id (Union[Unset, str]):
+
+    Raises:
+        errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+        httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
         Response[QueryResponseBody]
     """
 
     kwargs = _get_kwargs(
-        client=client,
         query=query,
         limit=limit,
         start=start,
@@ -239,37 +238,40 @@ async def asyncio_detailed(
         x_scope_org_id=x_scope_org_id,
     )
 
-    async with httpx.AsyncClient(verify=client.verify_ssl) as _client:
-        response = await _client.request(**kwargs)
+    response = await client.get_async_httpx_client().request(**kwargs)
 
-    return _build_response(response=response)
+    return _build_response(client=client, response=response)
 
 
 async def asyncio(
     *,
-    client: Client,
+    client: Union[AuthenticatedClient, Client],
     query: str,
-    limit: Union[Unset, None, int] = 100,
-    start: Union[None, Unset, datetime.datetime, float, int] = UNSET,
-    end: Union[None, Unset, datetime.datetime, float, int] = UNSET,
-    step: Union[None, Unset, datetime.datetime, float, int] = UNSET,
-    interval: Union[Unset, None, float] = UNSET,
-    direction: Union[Unset, None, Direction] = Direction.BACKWARD,
+    limit: Union[Unset, int] = 100,
+    start: Union[Unset, datetime.datetime, float, int] = UNSET,
+    end: Union[Unset, datetime.datetime, float, int] = UNSET,
+    step: Union[Unset, datetime.datetime, float, int] = UNSET,
+    interval: Union[Unset, float] = UNSET,
+    direction: Union[Unset, Direction] = UNSET,
     x_scope_org_id: Union[Unset, str] = UNSET,
 ) -> Optional[QueryResponseBody]:
     """
     Args:
         query (str):
-        limit (Union[Unset, None, int]):  Default: 100.
-        start (Union[None, Unset, datetime.datetime, float, int]):
-        end (Union[None, Unset, datetime.datetime, float, int]):
-        step (Union[None, Unset, datetime.datetime, float, int]):
-        interval (Union[Unset, None, float]):
-        direction (Union[Unset, None, Direction]):  Default: Direction.BACKWARD.
+        limit (Union[Unset, int]):  Default: 100.
+        start (Union[Unset, datetime.datetime, float, int]):
+        end (Union[Unset, datetime.datetime, float, int]):
+        step (Union[Unset, datetime.datetime, float, int]):
+        interval (Union[Unset, float]):
+        direction (Union[Unset, Direction]):
         x_scope_org_id (Union[Unset, str]):
 
+    Raises:
+        errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
+        httpx.TimeoutException: If the request takes longer than Client.timeout.
+
     Returns:
-        Response[QueryResponseBody]
+        QueryResponseBody
     """
 
     return (

@@ -2,8 +2,8 @@ from enum import Enum
 
 
 class Direction(str, Enum):
-    FORWARD = "forward"
     BACKWARD = "backward"
+    FORWARD = "forward"
 
     def __str__(self) -> str:
         return str(self.value)

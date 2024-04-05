@@ -1,15 +1,19 @@
-from typing import Any, Dict, List, Type, TypeVar, Union, cast
+from typing import TYPE_CHECKING, Any, Dict, List, Type, TypeVar, Union, cast
 
-import attr
+from attrs import define as _attrs_define
+from attrs import field as _attrs_field
 
-from ..models.query_response_metric import QueryResponseMetric
-from ..models.query_response_streams import QueryResponseStreams
 from ..types import UNSET, Unset
+
+if TYPE_CHECKING:
+    from ..models.query_response_metric import QueryResponseMetric
+    from ..models.query_response_streams import QueryResponseStreams
+
 
 T = TypeVar("T", bound="QueryResponseResult")
 
 
-@attr.s(auto_attribs=True)
+@_attrs_define
 class QueryResponseResult:
     """
     Attributes:
@@ -19,9 +23,9 @@ class QueryResponseResult:
     """
 
     values: List[str]
-    metric: Union[Unset, QueryResponseMetric] = UNSET
-    streams: Union[Unset, QueryResponseStreams] = UNSET
-    additional_properties: Dict[str, Any] = attr.ib(init=False, factory=dict)
+    metric: Union[Unset, "QueryResponseMetric"] = UNSET
+    streams: Union[Unset, "QueryResponseStreams"] = UNSET
+    additional_properties: Dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> Dict[str, Any]:
         values = self.values
@@ -50,6 +54,9 @@ class QueryResponseResult:
 
     @classmethod
     def from_dict(cls: Type[T], src_dict: Dict[str, Any]) -> T:
+        from ..models.query_response_metric import QueryResponseMetric
+        from ..models.query_response_streams import QueryResponseStreams
+
         d = src_dict.copy()
         values = cast(List[str], d.pop("values"))
 

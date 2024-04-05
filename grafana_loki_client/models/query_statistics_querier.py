@@ -1,21 +1,24 @@
-from typing import Any, Dict, List, Type, TypeVar
+from typing import TYPE_CHECKING, Any, Dict, List, Type, TypeVar
 
-import attr
+from attrs import define as _attrs_define
+from attrs import field as _attrs_field
 
-from ..models.query_statistics_store import QueryStatisticsStore
+if TYPE_CHECKING:
+    from ..models.query_statistics_store import QueryStatisticsStore
+
 
 T = TypeVar("T", bound="QueryStatisticsQuerier")
 
 
-@attr.s(auto_attribs=True)
+@_attrs_define
 class QueryStatisticsQuerier:
     """
     Attributes:
         store (QueryStatisticsStore):
     """
 
-    store: QueryStatisticsStore
-    additional_properties: Dict[str, Any] = attr.ib(init=False, factory=dict)
+    store: "QueryStatisticsStore"
+    additional_properties: Dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> Dict[str, Any]:
         store = self.store.to_dict()
@@ -32,6 +35,8 @@ class QueryStatisticsQuerier:
 
     @classmethod
     def from_dict(cls: Type[T], src_dict: Dict[str, Any]) -> T:
+        from ..models.query_statistics_store import QueryStatisticsStore
+
         d = src_dict.copy()
         store = QueryStatisticsStore.from_dict(d.pop("store"))
 

@@ -1,14 +1,18 @@
-from typing import Any, Dict, List, Type, TypeVar, Union
+from typing import TYPE_CHECKING, Any, Dict, List, Type, TypeVar, Union
 
-import attr
+from attrs import define as _attrs_define
+from attrs import field as _attrs_field
 
-from ..models.query_statistics_store_chunk import QueryStatisticsStoreChunk
 from ..types import UNSET, Unset
+
+if TYPE_CHECKING:
+    from ..models.query_statistics_store_chunk import QueryStatisticsStoreChunk
+
 
 T = TypeVar("T", bound="QueryStatisticsStore")
 
 
-@attr.s(auto_attribs=True)
+@_attrs_define
 class QueryStatisticsStore:
     """
     Attributes:
@@ -21,13 +25,16 @@ class QueryStatisticsStore:
     total_chunks_ref: int
     total_chunks_downloaded: int
     chunks_download_time: int
-    chunk: Union[Unset, QueryStatisticsStoreChunk] = UNSET
-    additional_properties: Dict[str, Any] = attr.ib(init=False, factory=dict)
+    chunk: Union[Unset, "QueryStatisticsStoreChunk"] = UNSET
+    additional_properties: Dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> Dict[str, Any]:
         total_chunks_ref = self.total_chunks_ref
+
         total_chunks_downloaded = self.total_chunks_downloaded
+
         chunks_download_time = self.chunks_download_time
+
         chunk: Union[Unset, Dict[str, Any]] = UNSET
         if not isinstance(self.chunk, Unset):
             chunk = self.chunk.to_dict()
@@ -48,6 +55,8 @@ class QueryStatisticsStore:
 
     @classmethod
     def from_dict(cls: Type[T], src_dict: Dict[str, Any]) -> T:
+        from ..models.query_statistics_store_chunk import QueryStatisticsStoreChunk
+
         d = src_dict.copy()
         total_chunks_ref = d.pop("totalChunksRef")
 
