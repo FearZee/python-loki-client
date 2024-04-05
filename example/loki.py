@@ -1,110 +1,94 @@
-import httpx #https://www.python-httpx.org
-import trio # async handling https://github.com/python-trio/trio 
+import httpx
+import trio
 import tempfile
-from rich import print as print # handles all kind of console output in an appealing manner
-import rich.progress
+from rich import print as rprint  # Renamed print function to avoid conflict with built-in print
 import json
 import time
 
 from grafana_loki_client import Client
 from grafana_loki_client.api.ready import get_ready
 from grafana_loki_client.api.query import get_loki_api_v1_query
-
-
+from grafana_loki_client.api.format_query import get_loki_api_v1_format_query
 
 BASE_URL = "http://localhost:3100"
 client = Client(base_url=BASE_URL)
 
-basic_info:dict = {
-    "url_ready": '/ready',
-    "url_log_level": '/log_level',
-    "url_service": '/services',
-    "url_config": '/config',
-    "url_metrics": '/metrics',
-    "url_check_query":'/loki/api/v1/format_query'
-}
+payload:str = 'query={job="varlogs"} |= ``|json '
+dd_keys:list = ["file_name","month", "day", "time", "host", "command_pid", "command_level", "message"]
 
-"""for key in basic_info:
-    print(f" {str(key).upper()[4:]} : {httpx.get(basic_info[key]).text}")"""
 
-###### works good, maybe a class and separate handling ---> meta info; info regarding the system
+async def perform_initial_checks():
+    # Check readiness of Loki instance
+    ready_response = await get_ready.asyncio(client=client)
+    if ready_response.status_code == 200:
+        rprint("Loki instance is ready.")
+    else:
+        rprint("Loki instance is not ready. Exiting.")
+        return False
 
-#payload:str = 'query={host=~".*", filename="/var/log/auth.log"} |= `` ' # works
-payload:str = 'query={job="varlogs"} |= ``|json ' # 
+    format_query_response = await get_loki_api_v1_format_query.asyncio(client=client, query='{foo= "bar"}')
+    if format_query_response.status == "success":
+        rprint("Query formatting check passed.")
+    else:
+        rprint("Query formatting check failed. Exiting.")
+        return False
 
-url02:str = '/loki/api/v1/query'
-url03:str = '/loki/api/v1/query'
-"""
-url04:str = '/loki/api/v1/status/buildinfo'
-url05:str = 
-url06:str = '/loki/api/v1/labels'
-url12:str = '/loki/api/v1/series'
-
-url14:str = '/loki/api/v1/index/volume' #<-
-"""
-# url06:str = '/loki/api/v1/labels'
-# r06 = httpx.get(url06)
-# print(r06.text)
-# r02 = httpx.get(url02)
-"""
-r04 = httpx.get(url04)
-r05 = httpx.get(url05, params=payload)
-#r06 = httpx.get(url06)"""
-#print(r03.keys())
-#print(r03["data"].keys())
-#print(r03["data"]["result"])
-#print(dict(r03["data"]["result"][0]).keys())
-#print(dict(r03["data"]["result"][0])["values"]) <----- #List of lists
+    return True
 
 
 async def call(url):
+    # Perform initial checks before making any query
+    initial_checks_passed = await perform_initial_checks()
+    if not initial_checks_passed:
+        return  # Exit if initial checks fail
+
     start_time = time.time()
-    print(start_time)
+    rprint(start_time)
 
-    if get_loki_api_v1_format_query.asyncio(client=client):
-        return url()
-    else:
-        print(f"Your query: {payload} is not valid")
+    print("Before await url()")
+    r = await url(client=client, query=payload)
 
-async def gather_data(url)->list[str]:
-    res: list = list()
+    print("Result of url():", r)  # Debug print to check the result of url()
+
+    return r
+
+
+async def gather_data(url) -> list[str]:
+    res: list = []  # Use list literal instead of list()
     try:
-        r = await call(url())
+        r = await call(url)  # Await the result of the call function
         print(1)
-        rr:dict = r.json()
-        print(2)
-        print(rr)
-        for i in list(dict(rr["data"]["result"][0])["values"]):
+        rr: dict = r.json()
+        rprint(2)
+        rprint(rr)
+        for i in dict(rr["data"]["result"][0])["values"]:
             res.append(i[1])
-    except:
-        # wait one minute and play a game
-        print("try again in one minute")
+    except Exception as e:  # Catch specific exceptions here
+        rprint(f"An error occurred: {e}")
+        rprint("Try again in one minute")
     return res
 
-def clear(string:str, character:str)->str:
-    return "".join(i for i in string if i not in character)
 
-dd_keys:list = ["file_name","month", "day", "time", "host", "command_pid", "command_level", "message"]
-
-def create_dict(dd_keys:list,log_list:list)->dict[str,str]:
-
-    dd: dict = dict()
+def create_dict(dd_keys: list, log_list: list) -> dict:
+    dd_list = []  # Use list to store dictionaries instead of overwriting dd in each iteration
     for log in log_list:
-        print(log)
-        ll = str(log).split(" ")
-        lll:str = " ".join(i for i in ll[6:])
+        ll = log.split(" ")  # No need to convert to str again
+        lll = " ".join(ll[6:])  # Simplified slicing
+        dd = {}  # Create a new dictionary for each log
         for i in range(6):
             dd[dd_keys[i]] = ll[i]
         dd[dd_keys[-1]] = lll
+        dd_list.append(dd)  # Append each log's dictionary to dd_list
+    return dd_list
 
 
+async def main():
+    lista: list = await gather_data(get_loki_api_v1_query.asyncio)
+    rprint(lista)
 
-lista:list = trio.run(gather_data, get_loki_api_v1_query.asyncio(client=client, query=payload))
-print(lista)
+    dd_list: list = create_dict(dd_keys, lista)
+    rprint(dd_list)
 
-dd : dict = create_dict(dd_keys,lista)
-print(dd)
-#### scanner  -- lexer --- parser
 
-# print(httpx.get(basic_info["url_log_level"]).text)
-# print(httpx.get(basic_info["url_service"]).text)
+if __name__ == "__main__":
+    trio.run(main)  # Execute the main function using trio.run
