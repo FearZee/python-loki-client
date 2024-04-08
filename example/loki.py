@@ -45,10 +45,7 @@ async def call(url):
     start_time = time.time()
     rprint(start_time)
 
-    print("Before await url()")
     r = await url(client=client, query=payload)
-
-    print("Result of url():", r)  # Debug print to check the result of url()
 
     return r
 

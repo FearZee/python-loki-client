@@ -129,6 +129,8 @@ paths:
       responses:
         '200':
           description: OK response.
+          content:
+            text/plain: { }
 
   /loki/api/v1/format_query:
     get:
