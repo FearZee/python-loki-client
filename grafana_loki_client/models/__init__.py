@@ -1,5 +1,6 @@
 """Contains all the data models used in inputs/outputs"""
 
+from .build_info_response_body import BuildInfoResponseBody
 from .direction import Direction
 from .format_query_response_body import FormatQueryResponseBody
 from .labels_response_body import LabelsResponseBody
@@ -21,6 +22,7 @@ from .service_state_enum import ServiceStateEnum
 from .services_list_response_body_item import ServicesListResponseBodyItem
 
 __all__ = (
+    "BuildInfoResponseBody",
     "Direction",
     "FormatQueryResponseBody",
     "LabelsResponseBody",

@@ -51,18 +51,26 @@ async def call(url):
 
 
 async def gather_data(url) -> list[str]:
-    res: list = []  # Use list literal instead of list()
+    res: list = []
     try:
-        r = await call(url)  # Await the result of the call function
-        print(1)
+        r = await call(url)
+        if r.status_code != 200:
+            raise httpx.HTTPError(f"HTTP error: {r.status_code}")
+
         rr: dict = r.json()
-        rprint(2)
-        rprint(rr)
+        if "data" not in rr:
+            raise KeyError("Invalid response format: 'data' key not found")
+
         for i in dict(rr["data"]["result"][0])["values"]:
             res.append(i[1])
-    except Exception as e:  # Catch specific exceptions here
+    except httpx.HTTPError as e:
+        rprint(f"HTTP error: {e}")
+    except json.JSONDecodeError as e:
+        rprint(f"JSON decoding error: {e}")
+    except KeyError as e:
+        rprint(f"Key error: {e}")
+    except Exception as e:
         rprint(f"An error occurred: {e}")
-        rprint("Try again in one minute")
     return res
 
 

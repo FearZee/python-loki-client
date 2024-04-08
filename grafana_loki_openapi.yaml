@@ -150,7 +150,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/FormatQueryResponseBody"
-
     post:
       tags:
         - Format Query
@@ -185,6 +184,18 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ServicesListResponseBody"
+
+  /loki/api/v1/status/buildinfo:
+    get:
+      tags:
+        - Build Info
+      responses:
+        '200':
+          description: OK response.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BuildInfoResponseBody"
 
 
 components:
@@ -402,3 +413,21 @@ components:
           state:
             $ref: "#/components/schemas/ServiceStateEnum"
             description: The current state of the service.
+
+    BuildInfoResponseBody:
+      type: object
+      properties:
+        version:
+          type: string
+        revision:
+          type: string
+        branch:
+          type: string
+        buildDate:
+          type: string
+          format: date-time
+        buildUser:
+          type: string
+        goVersion:
+          type: string
+
