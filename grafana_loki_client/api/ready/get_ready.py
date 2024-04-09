@@ -89,4 +89,4 @@ async def asyncio(
         await asyncio_detailed(
             client=client,
         )
-    ).parsed
+    )

@@ -7,7 +7,7 @@ import httpx
 from ... import errors
 from ...client import AuthenticatedClient, Client
 from ...models.direction import Direction
-from ...models.query_response_body import QueryResponseBody
+from ...models.query_range_response_body import QueryRangeResponseBody
 from ...types import UNSET, Response, Unset
 
 
@@ -81,9 +81,9 @@ def _get_kwargs(
 
 def _parse_response(
     *, client: Union[AuthenticatedClient, Client], response: httpx.Response
-) -> Optional[QueryResponseBody]:
+) -> Optional[QueryRangeResponseBody]:
     if response.status_code == HTTPStatus.OK:
-        response_200 = QueryResponseBody.from_dict(response.json())
+        response_200 = QueryRangeResponseBody.from_dict(response.json())
 
         return response_200
     if client.raise_on_unexpected_status:
@@ -94,7 +94,7 @@ def _parse_response(
 
 def _build_response(
     *, client: Union[AuthenticatedClient, Client], response: httpx.Response
-) -> Response[QueryResponseBody]:
+) -> Response[QueryRangeResponseBody]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -114,7 +114,7 @@ def sync_detailed(
     interval: Union[Unset, float] = UNSET,
     direction: Union[Unset, Direction] = UNSET,
     x_scope_org_id: Union[Unset, str] = UNSET,
-) -> Response[QueryResponseBody]:
+) -> Response[QueryRangeResponseBody]:
     """
     Args:
         query (str):
@@ -131,7 +131,7 @@ def sync_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[QueryResponseBody]
+        Response[QueryRangeResponseBody]
     """
 
     kwargs = _get_kwargs(
@@ -163,7 +163,7 @@ def sync(
     interval: Union[Unset, float] = UNSET,
     direction: Union[Unset, Direction] = UNSET,
     x_scope_org_id: Union[Unset, str] = UNSET,
-) -> Optional[QueryResponseBody]:
+) -> Optional[QueryRangeResponseBody]:
     """
     Args:
         query (str):
@@ -180,7 +180,7 @@ def sync(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        QueryResponseBody
+        QueryRangeResponseBody
     """
 
     return sync_detailed(
@@ -207,7 +207,7 @@ async def asyncio_detailed(
     interval: Union[Unset, float] = UNSET,
     direction: Union[Unset, Direction] = UNSET,
     x_scope_org_id: Union[Unset, str] = UNSET,
-) -> Response[QueryResponseBody]:
+) -> Response[QueryRangeResponseBody]:
     """
     Args:
         query (str):
@@ -224,7 +224,7 @@ async def asyncio_detailed(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[QueryResponseBody]
+        Response[QueryRangeResponseBody]
     """
 
     kwargs = _get_kwargs(
@@ -254,7 +254,7 @@ async def asyncio(
     interval: Union[Unset, float] = UNSET,
     direction: Union[Unset, Direction] = UNSET,
     x_scope_org_id: Union[Unset, str] = UNSET,
-) -> Optional[QueryResponseBody]:
+) -> Optional[QueryRangeResponseBody]:
     """
     Args:
         query (str):
@@ -271,7 +271,7 @@ async def asyncio(
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        QueryResponseBody
+        QueryRangeResponseBody
     """
 
     return (

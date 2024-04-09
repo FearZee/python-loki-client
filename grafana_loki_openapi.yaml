@@ -89,7 +89,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/QueryResponseBody"
+                $ref: "#/components/schemas/QueryRangeResponseBody"
 
   /loki/api/v1/labels:
     get:
@@ -210,6 +210,7 @@ components:
           format: date-time
         - type: integer
         - type: number
+
     QueryResponseBody:
       required:
         - status
@@ -242,6 +243,55 @@ components:
         stats:
           $ref: "#/components/schemas/QueryStatistics"
     QueryResponseResult:
+      type: object
+      required:
+        - value
+      properties:
+        metric:
+          $ref: "#/components/schemas/QueryResponseMetric"
+        streams:
+          $ref: "#/components/schemas/QueryResponseStreams"
+        value:
+          type: array
+          items:
+            type: string
+
+    QueryRangeResponseBody:
+      type: object
+      required:
+        - status
+        - data
+      properties:
+        status:
+          type: string
+          example: success
+        data:
+          $ref: "#/components/schemas/QueryRangeResponseData"
+      example:
+        id: 01FCNDV6P870EA6S7TK1DSYDG0
+        name: My test API key
+
+    QueryRangeResponseData:
+      type: object
+      required:
+        - resultType
+        - result
+        - stats
+      properties:
+        resultType:
+          enum:
+            - vector
+            - streams
+            - matrix
+          description: "Indicates the type of result. Can be 'vector' or 'streams'."
+        result:
+          type: array
+          items:
+            $ref: "#/components/schemas/QueryRangeResponseResult"
+        stats:
+          $ref: "#/components/schemas/QueryStatistics"
+
+    QueryRangeResponseResult:
       type: object
       required:
         - values

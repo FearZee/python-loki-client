@@ -17,18 +17,18 @@ T = TypeVar("T", bound="QueryResponseResult")
 class QueryResponseResult:
     """
     Attributes:
-        values (List[str]):
+        value (List[str]):
         metric (Union[Unset, QueryResponseMetric]):
         streams (Union[Unset, QueryResponseStreams]):
     """
 
-    values: List[str]
+    value: List[str]
     metric: Union[Unset, "QueryResponseMetric"] = UNSET
     streams: Union[Unset, "QueryResponseStreams"] = UNSET
     additional_properties: Dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> Dict[str, Any]:
-        values = self.values
+        value = self.value
 
         metric: Union[Unset, Dict[str, Any]] = UNSET
         if not isinstance(self.metric, Unset):
@@ -42,7 +42,7 @@ class QueryResponseResult:
         field_dict.update(self.additional_properties)
         field_dict.update(
             {
-                "values": values,
+                "value": value,
             }
         )
         if metric is not UNSET:
@@ -58,7 +58,7 @@ class QueryResponseResult:
         from ..models.query_response_streams import QueryResponseStreams
 
         d = src_dict.copy()
-        values = cast(List[str], d.pop("values"))
+        value = cast(List[str], d.pop("value"))
 
         _metric = d.pop("metric", UNSET)
         metric: Union[Unset, QueryResponseMetric]
@@ -75,7 +75,7 @@ class QueryResponseResult:
             streams = QueryResponseStreams.from_dict(_streams)
 
         query_response_result = cls(
-            values=values,
+            value=value,
             metric=metric,
             streams=streams,
         )

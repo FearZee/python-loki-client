@@ -5,6 +5,10 @@ from .direction import Direction
 from .format_query_response_body import FormatQueryResponseBody
 from .labels_response_body import LabelsResponseBody
 from .post_loki_api_v1_format_query_body import PostLokiApiV1FormatQueryBody
+from .query_range_response_body import QueryRangeResponseBody
+from .query_range_response_data import QueryRangeResponseData
+from .query_range_response_data_result_type import QueryRangeResponseDataResultType
+from .query_range_response_result import QueryRangeResponseResult
 from .query_response_body import QueryResponseBody
 from .query_response_data import QueryResponseData
 from .query_response_data_result_type import QueryResponseDataResultType
@@ -27,6 +31,10 @@ __all__ = (
     "FormatQueryResponseBody",
     "LabelsResponseBody",
     "PostLokiApiV1FormatQueryBody",
+    "QueryRangeResponseBody",
+    "QueryRangeResponseData",
+    "QueryRangeResponseDataResultType",
+    "QueryRangeResponseResult",
     "QueryResponseBody",
     "QueryResponseData",
     "QueryResponseDataResultType",

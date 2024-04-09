@@ -18,8 +18,22 @@ pip install python-loki-client
 
 This client is still incomplete and implements only the following endpoints:
 
+### Query endpoints:
+
 - `GET /loki/api/v1/query`
 - `GET /loki/api/v1/query_range`
+- `GET /loki/api/v1/labels`
+
+### Status endpoints:
+
+- `GET /ready`
+- `GET /services`
+- `GET /loki/api/v1/status/buildinfo`
+
+### Other endpoints:
+
+- `GET /loki/api/v1/format_query`
+- `POST /loki/api/v1/format_query`
 
 ## Usage
 
