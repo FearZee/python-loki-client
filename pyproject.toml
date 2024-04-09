@@ -17,7 +17,7 @@ name = "python-loki-clientv2"
 version = "0.1.3"
 description = "Python client for Grafana Loki"
 repository = "https://github.com/FearZee/python-loki-client"
-authors = ["FearZee","Daniele Esposti <daniele.esposti@gmail.com>"]
+authors = ["FearZee <Sascha.zierke+plaesh@outlook.com>","Daniele Esposti <daniele.esposti@gmail.com>"]
 license = "MIT"
 readme = "README.md"
 packages = [{ include = "grafana_loki_client" }]
