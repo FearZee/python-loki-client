@@ -3,18 +3,30 @@ import time
 
 import httpx
 import trio
+from rich import (
+    print as rprint,  # Renamed print function to avoid conflict with built-in print
+)
+
 from grafana_loki_client import Client
 from grafana_loki_client.api.format_query import get_loki_api_v1_format_query
 from grafana_loki_client.api.query_range import get_loki_api_v1_query_range
 from grafana_loki_client.api.ready import get_ready
-from rich import print as rprint  # Renamed print function to avoid conflict with built-in print
 
 BASE_URL = "http://localhost:3100"
 client = Client(base_url=BASE_URL)
 
 # payload:str = '{foo="bar2"}'
-payload:str = 'sum(rate({foo="bar2"}[10m])) by (level)'
-dd_keys:list = ["file_name","month", "day", "time", "host", "command_pid", "command_level", "message"]
+payload: str = 'sum(rate({foo="bar2"}[10m])) by (level)'
+dd_keys: list = [
+    "file_name",
+    "month",
+    "day",
+    "time",
+    "host",
+    "command_pid",
+    "command_level",
+    "message",
+]
 
 
 async def perform_initial_checks():
@@ -26,7 +38,9 @@ async def perform_initial_checks():
         rprint("Loki instance is not ready. Exiting.")
         return False
 
-    format_query_response = await get_loki_api_v1_format_query.asyncio(client=client, query='{foo= "bar"}')
+    format_query_response = await get_loki_api_v1_format_query.asyncio(
+        client=client, query='{foo= "bar"}'
+    )
     if format_query_response.status == "success":
         rprint("Query formatting check passed.")
     else:

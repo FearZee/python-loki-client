@@ -17,8 +17,7 @@ def coro(f):
 
 @click.command()
 # @click.argument("url")
-@click.option('--url', prompt='Your name',
-              help='The person to greet.')
+@click.option("--url", prompt="Your name", help="The person to greet.")
 @coro
 async def main(url: str) -> None:
     # Create client
