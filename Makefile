@@ -1,8 +1,12 @@
 .SILENT: fmt check lint
 
-generate:
+generate-win:
 	rmdir /s grafana_loki_client
 
+	openapi-python-client generate --meta none --path grafana_loki_openapi.yaml
+
+generate:
+	rm -rf grafana_loki_client
 	openapi-python-client generate --meta none --path grafana_loki_openapi.yaml
 
 fmt:
