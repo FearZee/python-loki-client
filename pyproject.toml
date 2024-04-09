@@ -16,8 +16,8 @@ skip_glob = ".venv"
 name = "python-loki-clientv2"
 version = "0.1.2"
 description = "Python client for Grafana Loki"
-repository = "https://github.com/expobrain/python-loki-client"
-authors = ["Daniele Esposti <daniele.esposti@gmail.com>"]
+repository = "https://github.com/FearZee/python-loki-client"
+authors = ["FearZee","Daniele Esposti <daniele.esposti@gmail.com>"]
 license = "MIT"
 readme = "README.md"
 packages = [{ include = "grafana_loki_client" }]
