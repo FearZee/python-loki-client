@@ -79,14 +79,3 @@ async def asyncio_detailed(
     response = await client.get_async_httpx_client().request(**kwargs)
 
     return _build_response(client=client, response=response)
-
-async def asyncio(
-    *,
-    client: Union[AuthenticatedClient, Client],
-):
-
-    return (
-        await asyncio_detailed(
-            client=client,
-        )
-    )

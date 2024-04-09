@@ -192,7 +192,7 @@ async def asyncio(
     query: str,
     limit: int = 100,
     time: Union[Unset, datetime.datetime] = UNSET,
-    direction: Direction = Direction.BACKWARD,
+    direction: Direction,
     x_scope_org_id: Union[Unset, str] = UNSET,
 ) -> Optional[QueryResponseBody]:
     """

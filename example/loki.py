@@ -31,7 +31,7 @@ dd_keys: list = [
 
 async def perform_initial_checks():
     # Check readiness of Loki instance
-    ready_response = await get_ready.asyncio(client=client)
+    ready_response = await get_ready.asyncio_detailed(client=client)
     if ready_response.status_code == 200:
         rprint("Loki instance is ready.")
     else:
