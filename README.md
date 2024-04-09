@@ -11,7 +11,7 @@ A client library for accessing Grafana Loki APIs.
 To install the client:
 
 ```shell
-pip install python-loki-client
+pip install python-loki-clientv2
 ```
 
 ## Implemented endpoints
