@@ -1,4 +1,3 @@
-import datetime
 from http import HTTPStatus
 from typing import Any, Dict, Optional, Union
 
@@ -6,54 +5,52 @@ import httpx
 
 from ... import errors
 from ...client import AuthenticatedClient, Client
-from ...models.direction import Direction
-from ...models.query_response_body import QueryResponseBody
+from ...models.volume_response import VolumeResponse
 from ...types import UNSET, Response, Unset
 
 
 def _get_kwargs(
     *,
     query: str,
-    limit: int = 100,
-    time: Union[Unset, datetime.datetime] = UNSET,
-    direction: Direction,
-    x_scope_org_id: Union[Unset, str] = UNSET,
+    start: int,
+    end: int,
+    limit: Union[Unset, int] = 100,
+    step: Union[Unset, str] = UNSET,
+    target_labels: Union[Unset, str] = UNSET,
+    aggregate_by: Union[Unset, str] = UNSET,
 ) -> Dict[str, Any]:
-    headers: Dict[str, Any] = {}
-    if not isinstance(x_scope_org_id, Unset):
-        headers["X-Scope-OrgID"] = x_scope_org_id
-
     params: Dict[str, Any] = {}
 
     params["query"] = query
 
+    params["start"] = start
+
+    params["end"] = end
+
     params["limit"] = limit
 
-    json_time: Union[Unset, str] = UNSET
-    if not isinstance(time, Unset):
-        json_time = time.isoformat()
-    params["time"] = json_time
+    params["step"] = step
 
-    json_direction = direction.value
-    params["direction"] = json_direction
+    params["targetLabels"] = target_labels
+
+    params["aggregateBy"] = aggregate_by
 
     params = {k: v for k, v in params.items() if v is not UNSET and v is not None}
 
     _kwargs: Dict[str, Any] = {
         "method": "get",
-        "url": "/loki/api/v1/query",
+        "url": "/loki/api/v1/index/volume",
         "params": params,
     }
 
-    _kwargs["headers"] = headers
     return _kwargs
 
 
 def _parse_response(
     *, client: Union[AuthenticatedClient, Client], response: httpx.Response
-) -> Optional[QueryResponseBody]:
+) -> Optional[VolumeResponse]:
     if response.status_code == HTTPStatus.OK:
-        response_200 = QueryResponseBody.from_dict(response.json())
+        response_200 = VolumeResponse.from_dict(response.json())
 
         return response_200
     if client.raise_on_unexpected_status:
@@ -64,7 +61,7 @@ def _parse_response(
 
 def _build_response(
     *, client: Union[AuthenticatedClient, Client], response: httpx.Response
-) -> Response[QueryResponseBody]:
+) -> Response[VolumeResponse]:
     return Response(
         status_code=HTTPStatus(response.status_code),
         content=response.content,
@@ -77,33 +74,39 @@ def sync_detailed(
     *,
     client: Union[AuthenticatedClient, Client],
     query: str,
-    limit: int = 100,
-    time: Union[Unset, datetime.datetime] = UNSET,
-    direction: Direction,
-    x_scope_org_id: Union[Unset, str] = UNSET,
-) -> Response[QueryResponseBody]:
+    start: int,
+    end: int,
+    limit: Union[Unset, int] = 100,
+    step: Union[Unset, str] = UNSET,
+    target_labels: Union[Unset, str] = UNSET,
+    aggregate_by: Union[Unset, str] = UNSET,
+) -> Response[VolumeResponse]:
     """
     Args:
         query (str):
-        limit (int):  Default: 100.
-        time (Union[Unset, datetime.datetime]):
-        direction (Direction):
-        x_scope_org_id (Union[Unset, str]):
+        start (int):
+        end (int):
+        limit (Union[Unset, int]):  Default: 100.
+        step (Union[Unset, str]):
+        target_labels (Union[Unset, str]):
+        aggregate_by (Union[Unset, str]):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[QueryResponseBody]
+        Response[VolumeResponse]
     """
 
     kwargs = _get_kwargs(
         query=query,
+        start=start,
+        end=end,
         limit=limit,
-        time=time,
-        direction=direction,
-        x_scope_org_id=x_scope_org_id,
+        step=step,
+        target_labels=target_labels,
+        aggregate_by=aggregate_by,
     )
 
     response = client.get_httpx_client().request(
@@ -117,34 +120,40 @@ def sync(
     *,
     client: Union[AuthenticatedClient, Client],
     query: str,
-    limit: int = 100,
-    time: Union[Unset, datetime.datetime] = UNSET,
-    direction: Direction,
-    x_scope_org_id: Union[Unset, str] = UNSET,
-) -> Optional[QueryResponseBody]:
+    start: int,
+    end: int,
+    limit: Union[Unset, int] = 100,
+    step: Union[Unset, str] = UNSET,
+    target_labels: Union[Unset, str] = UNSET,
+    aggregate_by: Union[Unset, str] = UNSET,
+) -> Optional[VolumeResponse]:
     """
     Args:
         query (str):
-        limit (int):  Default: 100.
-        time (Union[Unset, datetime.datetime]):
-        direction (Direction):
-        x_scope_org_id (Union[Unset, str]):
+        start (int):
+        end (int):
+        limit (Union[Unset, int]):  Default: 100.
+        step (Union[Unset, str]):
+        target_labels (Union[Unset, str]):
+        aggregate_by (Union[Unset, str]):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        QueryResponseBody
+        VolumeResponse
     """
 
     return sync_detailed(
         client=client,
         query=query,
+        start=start,
+        end=end,
         limit=limit,
-        time=time,
-        direction=direction,
-        x_scope_org_id=x_scope_org_id,
+        step=step,
+        target_labels=target_labels,
+        aggregate_by=aggregate_by,
     ).parsed
 
 
@@ -152,33 +161,39 @@ async def asyncio_detailed(
     *,
     client: Union[AuthenticatedClient, Client],
     query: str,
-    limit: int = 100,
-    time: Union[Unset, datetime.datetime] = UNSET,
-    direction: Direction,
-    x_scope_org_id: Union[Unset, str] = UNSET,
-) -> Response[QueryResponseBody]:
+    start: int,
+    end: int,
+    limit: Union[Unset, int] = 100,
+    step: Union[Unset, str] = UNSET,
+    target_labels: Union[Unset, str] = UNSET,
+    aggregate_by: Union[Unset, str] = UNSET,
+) -> Response[VolumeResponse]:
     """
     Args:
         query (str):
-        limit (int):  Default: 100.
-        time (Union[Unset, datetime.datetime]):
-        direction (Direction):
-        x_scope_org_id (Union[Unset, str]):
+        start (int):
+        end (int):
+        limit (Union[Unset, int]):  Default: 100.
+        step (Union[Unset, str]):
+        target_labels (Union[Unset, str]):
+        aggregate_by (Union[Unset, str]):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        Response[QueryResponseBody]
+        Response[VolumeResponse]
     """
 
     kwargs = _get_kwargs(
         query=query,
+        start=start,
+        end=end,
         limit=limit,
-        time=time,
-        direction=direction,
-        x_scope_org_id=x_scope_org_id,
+        step=step,
+        target_labels=target_labels,
+        aggregate_by=aggregate_by,
     )
 
     response = await client.get_async_httpx_client().request(**kwargs)
@@ -190,34 +205,40 @@ async def asyncio(
     *,
     client: Union[AuthenticatedClient, Client],
     query: str,
-    limit: int = 100,
-    time: Union[Unset, datetime.datetime] = UNSET,
-    direction: Direction = Direction.BACKWARD,
-    x_scope_org_id: Union[Unset, str] = UNSET,
-) -> Optional[QueryResponseBody]:
+    start: int,
+    end: int,
+    limit: Union[Unset, int] = 100,
+    step: Union[Unset, str] = UNSET,
+    target_labels: Union[Unset, str] = UNSET,
+    aggregate_by: Union[Unset, str] = UNSET,
+) -> Optional[VolumeResponse]:
     """
     Args:
         query (str):
-        limit (int):  Default: 100.
-        time (Union[Unset, datetime.datetime]):
-        direction (Direction):
-        x_scope_org_id (Union[Unset, str]):
+        start (int):
+        end (int):
+        limit (Union[Unset, int]):  Default: 100.
+        step (Union[Unset, str]):
+        target_labels (Union[Unset, str]):
+        aggregate_by (Union[Unset, str]):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
         httpx.TimeoutException: If the request takes longer than Client.timeout.
 
     Returns:
-        QueryResponseBody
+        VolumeResponse
     """
 
     return (
         await asyncio_detailed(
             client=client,
             query=query,
+            start=start,
+            end=end,
             limit=limit,
-            time=time,
-            direction=direction,
-            x_scope_org_id=x_scope_org_id,
+            step=step,
+            target_labels=target_labels,
+            aggregate_by=aggregate_by,
         )
     ).parsed

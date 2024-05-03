@@ -24,6 +24,11 @@ from .query_statistics_store_chunk import QueryStatisticsStoreChunk
 from .query_statistics_summary import QueryStatisticsSummary
 from .service_state_enum import ServiceStateEnum
 from .services_list_response_body_item import ServicesListResponseBodyItem
+from .volume_response import VolumeResponse
+from .volume_response_data import VolumeResponseData
+from .volume_response_data_result_type import VolumeResponseDataResultType
+from .volume_response_result import VolumeResponseResult
+from .volume_response_result_metric import VolumeResponseResultMetric
 
 __all__ = (
     "BuildInfoResponseBody",
@@ -50,4 +55,9 @@ __all__ = (
     "QueryStatisticsSummary",
     "ServicesListResponseBodyItem",
     "ServiceStateEnum",
+    "VolumeResponse",
+    "VolumeResponseData",
+    "VolumeResponseDataResultType",
+    "VolumeResponseResult",
+    "VolumeResponseResultMetric",
 )

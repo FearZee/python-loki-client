@@ -32,6 +32,8 @@ paths:
           required: true
           schema:
             $ref: "#/components/schemas/Direction"
+          default: backward
+          example: backward
         - name: X-Scope-OrgID
           in: header
           schema:
@@ -43,6 +45,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/QueryResponseBody"
+
   /loki/api/v1/query_range:
     get:
       tags:
@@ -197,6 +200,131 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/BuildInfoResponseBody"
+
+  /loki/api/v1/index/volume:
+    get:
+      tags:
+        - Volume
+      parameters:
+        - name: query
+          in: query
+          description: The LogQL matchers to check (e.g., {job="foo", env=~".+"}). This parameter is required.
+          required: true
+          schema:
+            type: string
+        - name: start
+          in: query
+          description: The start time for the query as a nanosecond Unix epoch. This parameter is required.
+          required: true
+          schema:
+            type: integer
+        - name: end
+          in: query
+          description: The end time for the query as a nanosecond Unix epoch. This parameter is required.
+          required: true
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          description: How many metric series to return. Defaults to 100.
+          required: false
+          schema:
+            type: integer
+            default: 100
+        - name: step
+          in: query
+          description: |
+            Query resolution step width in duration format or float number of seconds.
+            Defaults to a dynamic value based on start and end.
+            Only applicable when querying the volume_range endpoint.
+          required: false
+          schema:
+            type: string
+        - name: targetLabels
+          in: query
+          description: |
+            A comma-separated list of labels to aggregate into.
+            When not provided, volumes will be aggregated into the matching labels or label-value pairs.
+          required: false
+          schema:
+            type: string
+        - name: aggregateBy
+          in: query
+          description: |
+            Whether to aggregate into labels or label-value pairs.
+            Defaults to label-value pairs.
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK response.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VolumeResponse"
+
+  /loki/api/v1/index/volume_range:
+    get:
+      tags:
+        - Volume
+      parameters:
+        - name: query
+          in: query
+          description: The LogQL matchers to check (e.g., {job="foo", env=~".+"}). This parameter is required.
+          required: true
+          schema:
+            type: string
+        - name: start
+          in: query
+          description: The start time for the query as a nanosecond Unix epoch. This parameter is required.
+          required: true
+          schema:
+            type: integer
+        - name: end
+          in: query
+          description: The end time for the query as a nanosecond Unix epoch. This parameter is required.
+          required: true
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          description: How many metric series to return. Defaults to 100.
+          required: false
+          schema:
+            type: integer
+            default: 100
+        - name: step
+          in: query
+          description: |
+            Query resolution step width in duration format or float number of seconds.
+            Defaults to a dynamic value based on start and end.
+          required: false
+          schema:
+            type: string
+        - name: targetLabels
+          in: query
+          description: |
+            A comma-separated list of labels to aggregate into.
+            When not provided, volumes will be aggregated into the matching labels or label-value pairs.
+          required: false
+          schema:
+            type: string
+        - name: aggregateBy
+          in: query
+          description: |
+            Whether to aggregate into labels or label-value pairs.
+            Defaults to label-value pairs.
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK response.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VolumeResponse"
 
 
 components:
@@ -481,4 +609,41 @@ components:
           type: string
         goVersion:
           type: string
+
+    VolumeResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: success
+        data:
+          $ref: "#/components/schemas/VolumeResponseData"
+
+    VolumeResponseData:
+      type: object
+      properties:
+        resultType:
+          enum:
+            - vector
+            - streams
+          type: string
+        result:
+          type: array
+          items:
+            $ref: "#/components/schemas/VolumeResponseResult"
+
+    VolumeResponseResult:
+      type: object
+      properties:
+        metric:
+          type: object
+          additionalProperties:
+            type: string
+        values:
+          type: array
+          items:
+            type: array
+            items:
+              type: integer
+              type: string
 
