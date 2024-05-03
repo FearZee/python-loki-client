@@ -14,7 +14,7 @@ skip_glob = ".venv"
 
 [tool.poetry]
 name = "python-loki-clientv2"
-version = "0.1.5"
+version = "0.1.6"
 description = "Python client for Grafana Loki"
 repository = "https://github.com/FearZee/python-loki-client"
 authors = ["FearZee <Sascha.zierke+plaesh@outlook.com>","Daniele Esposti <daniele.esposti@gmail.com>"]
